@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -22,23 +22,23 @@ const BooksDashboard = () => {
   const [filterGenre, setFilterGenre] = useState("All");
 
 
-  const fetchBooks = async () => {
+  const fetchBooks = useCallback(async () => {
     try {
       const res = await axios.get(API);
 
       const userBooks = res.data.filter(
-        (b) => b.UserId == userId
+        (b) => String(b.UserId) === String(userId)
       );
 
       setBooks(userBooks);
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [API, userId]);
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [fetchBooks]);
 
   
   const deleteBook = async (id) => {
@@ -187,6 +187,7 @@ const BooksDashboard = () => {
                         navigate(`/edit-book/${book.id}`)
                       }
                     >
+                      
                       Edit
                     </button>
 
